@@ -32,6 +32,27 @@ def gini_idx(groups, classes):
 def best_split(ds):
 	class_values = list(set(row[-1] for row in ds))
 	res_index, res_value, res_score, res_groups = 1111, 1111, 1111, None
+	# as we can see from below the ds is list of lists. ds[0] is firts element which has dimensions of 3. we substract 1
+	# to get iterations over values and not the class (0,1)
+	#furthrmore, the iterations in second cycle are taking the index = 0 (in first iteration) or index = 1 in second. 
+	# the second cycle per se passes the the index (e.g. index=0) and row[0] first value of row in first inner iteration
+	# it has 6.1524 value in our example below. Then this value along with index=0 is passed to split_ds() along with entire dataset
+	# the split_ds() method divides this into two groups. it iterates over all rows in the dataset (for index=0 in this case) 
+	#and performs a check on whether value any row's 0'th element is lower than  6.1524 (and then assigns entire row to left group) or, 	
+	# on opposite, the value is higher - and then assigns enrire row in iteration to the right group. split_ds() then returns both groups
+	# those are passed to gini_idx() to perform the cost of split evaluation. 
+	# Furthermore,for row in ds selects the next row and index [0] applied to it results in 3.2598;And the process described above repeats
+	# when all the raws are exhausted the index = 1 (second column) is passed from top to bottom to next iteration
+	# thus here the 5.0729 is passed with index = 1 to split_ds() along with entire dataset. And the whole process repeats. 
+	# as a result for a test dataset we'll have something like 
+	# X1 < 6.16 Gini=0.35
+	# X1 < 3.26 Gini=0.47
+	# X1 < 5.37 Gini=0.72
+	# ...
+	# X2 < 5.16 Gini=0.19
+	# X2 < 5.37 Gini=0.42
+	# whus iterating over X1 and X2 attributes. Finally a best split (using lowest Gini index value) could be chosen
+
 	for index in range(len(ds[0])-1):
 		for row in ds:
 			ds_groups = split_ds(index, row[index], ds)
