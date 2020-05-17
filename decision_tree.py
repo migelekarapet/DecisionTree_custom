@@ -40,7 +40,52 @@ def best_split(ds):
 			if gini < b_score:
 				res_index, res_value, res_score, res_groups = index, row[index], gini_ind, ds_groups
 	return {'index':res_index, 'value':res_value, 'groups':res_groups}
+
+
+# terminating node value creaiton
+def terminating(group):
+	results = [row[-1] for row in group]
+	return max(set(results), key=results.count)
  
+# make terminating or creation of node's child split
+def split(node, max_depth, min_size, depth):
+	left, right = node['groups']
+	del(node['groups'])
+	# emptyness check
+	if not left or not right:
+		node['left'] = node['right'] = terminating(left + right)
+		return
+	# verifying if we reached max depth
+	if depth >= max_depth:
+		node['left'], node['right'] = terminating(left), terminating(right)
+		return
+	# node's left child
+	if len(left) <= min_size:
+		node['left'] = terminating(left)
+	else:
+		node['left'] = get_split(left)
+		split(node['left'], max_depth, min_size, depth+1)
+	# node's right child
+	if len(right) <= min_size:
+		node['right'] = terminating(right)
+	else:
+		node['right'] = get_split(right)
+		split(node['right'], max_depth, min_size, depth+1)
+ 
+# decision tree construciton
+def dec_tree_construct(train, max_depth, min_size):
+	root = get_split(train)
+	split(root, max_depth, min_size, 1)
+	return root
+ 
+# decision tree printing
+def tree_print(node, depth=0):
+	if isinstance(node, dict):
+		print('%s[X%d < %.2f]' % ((depth*' ', (node['index']+1), node['value'])))
+		tree_print(node['left'], depth+1)
+		tree_print(node['right'], depth+1)
+	else:
+		print('%s[%s]' % ((depth*' ', node)))
 ds = [[6.1524,5.0729,0],
 	[3.2598,3.1597,0],
 	[5.3698,4.1587,0],
@@ -51,5 +96,7 @@ ds = [[6.1524,5.0729,0],
 	[9.7856,2.8315,1],
 	[12.5961,5.1587,1],
 	[8.3258,5.3698,1]]
-split = best_split(ds)
-print('Split: [X%d < %.2f]' % ((split['index']+1), split['value']))
+
+dec_tree = dec_tree_construct(ds, 1, 1)
+tree_print(dec_tree)
+
