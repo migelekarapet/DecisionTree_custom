@@ -118,6 +118,30 @@ ds = [[6.1524,5.0729,0],
 	[12.5961,5.1587,1],
 	[8.3258,5.3698,1]]
 
-dec_tree = dec_tree_construct(ds, 1, 1)
-tree_print(dec_tree)
+#dec_tree = dec_tree_construct(ds, 1, 1)
+#tree_print(dec_tree)
+
+# we'll now perform a prediction for decision tree's most likely node 
+def node_prediction(nd, row):
+	if row[nd['index']] < nd['value']:
+		if isinstance(nd['left'], dict):
+			return node_prediction(nd['left'], row)
+		else:
+			return nd['left']
+	else:
+		if isinstance(nd['right'], dict):
+			return node_prediction(nd['right'], row)
+		else:
+			return nd['right']
+ 
+# node_prediction call is made from here
+def decision_tree(train, test, max_depth, min_size):
+	tree = build_tree(train, max_depth, min_size)
+	predictions = list()
+	for row in test:
+		prediction = node_prediction(tree, row)
+		predictions.append(prediction)
+	return(predictions)
+ 
+# implement main for soem example ...
 
