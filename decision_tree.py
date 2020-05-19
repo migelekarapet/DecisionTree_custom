@@ -56,7 +56,7 @@ def best_split(ds):
 	for index in range(len(ds[0])-1):
 		for row in ds:
 			ds_groups = split_ds(index, row[index], ds)
-			gini_ind = gini_idx(groups, class_values)
+			gini_ind = gini_idx(ds_groups, class_values)
 			print('X%d < %.2f Gini=%.2f' % ((index+1), row[index], gini_ind))
 			if gini < b_score:
 				res_index, res_value, res_score, res_groups = index, row[index], gini_ind, ds_groups
