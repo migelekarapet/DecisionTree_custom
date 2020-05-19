@@ -30,7 +30,8 @@ def gini_idx(groups, classes):
  
 # this method calculates the best split point for the given ds
 def best_split(ds):
-	class_values = list(set(row[-1] for row in ds))
+	# run over the possible values that the class variable entails
+	values_cls = list(set(row[-1] for row in ds))
 	res_index, res_value, res_score, res_groups = 1111, 1111, 1111, None
 	# as we can see from below the ds is list of lists. ds[0] is firts element which has dimensions of 3. we substract 1
 	# to get iterations over values and not the class (0,1)
@@ -56,7 +57,7 @@ def best_split(ds):
 	for index in range(len(ds[0])-1):
 		for row in ds:
 			ds_groups = split_ds(index, row[index], ds)
-			gini_ind = gini_idx(ds_groups, class_values)
+			gini_ind = gini_idx(ds_groups, values_cls)
 			print('X%d < %.2f Gini=%.2f' % ((index+1), row[index], gini_ind))
 			if gini < b_score:
 				res_index, res_value, res_score, res_groups = index, row[index], gini_ind, ds_groups
