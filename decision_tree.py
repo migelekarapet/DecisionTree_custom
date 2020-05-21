@@ -95,9 +95,9 @@ def split(node, max_depth, min_size, depth):
 		split(node['right'], max_depth, min_size, depth+1)
  
 # decision tree construciton
-def dec_tree_construct(train, max_depth, min_size):
-	root = get_split(train)
-	split(root, max_depth, min_size, 1)
+def dec_tree_construct(trn, depth_max, size_min):
+	root = best_split(trn)
+	split(root, depth_max, size_min, 1)
 	return root
  
 # decision tree printing
