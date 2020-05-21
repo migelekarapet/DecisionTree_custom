@@ -70,7 +70,7 @@ def terminating(group):
 	return max(set(results), key=results.count)
  
 # make terminating or creation of node's child split
-def split(node, max_depth, min_size, depth):
+def split_node(node, depth_max, size_min, depth):
 	left, right = node['groups']
 	del(node['groups'])
 	# emptyness check
@@ -78,26 +78,27 @@ def split(node, max_depth, min_size, depth):
 		node['left'] = node['right'] = terminating(left + right)
 		return
 	# verifying if we reached max depth
-	if depth >= max_depth:
+	if depth >= depth_max:
 		node['left'], node['right'] = terminating(left), terminating(right)
 		return
 	# node's left child
-	if len(left) <= min_size:
+	if len(left) <= size_min:
 		node['left'] = terminating(left)
 	else:
-		node['left'] = get_split(left)
-		split(node['left'], max_depth, min_size, depth+1)
+		node['left'] = best_split(left)
+		split_node(node['left'], depth_max, size_min, depth+1)
 	# node's right child
-	if len(right) <= min_size:
+	if len(right) <= size_min:
 		node['right'] = terminating(right)
 	else:
-		node['right'] = get_split(right)
-		split(node['right'], max_depth, min_size, depth+1)
+		node['right'] = best_split(right)
+		split_node(node['right'], depth_max, size_min, depth+1)
  
+
 # decision tree construciton
 def dec_tree_construct(trn, depth_max, size_min):
 	root = best_split(trn)
-	split(root, depth_max, size_min, 1)
+	split_node(root, depth_max, size_min, 1)
 	return root
  
 # decision tree printing
